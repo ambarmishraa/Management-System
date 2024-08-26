@@ -7,6 +7,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap; /* Allows the items to wrap to the next row */
   height: 100vh;
   background: #0f0c29; /* fallback for old browsers */
   background: -webkit-linear-gradient(
@@ -27,13 +28,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  /* background-color: red; */
-  width: 50%;
-  height: 50%;
+  width: 30%; /* Ensures only three items fit in a row */
+  margin: 10px; /* Adds space between buttons */
 }
 
 .button-85 {
-  padding: 7em 6em;
+  padding: 3em 2.5em; /* Adjusted padding to fit better */
   border: none;
   outline: none;
   color: rgb(255, 255, 255);

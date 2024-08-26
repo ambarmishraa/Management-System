@@ -34,6 +34,22 @@ $conn->close();
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Coordinator</title>
+  <script>
+function deleteDialog(event, id) {
+    // Prevent the default action of the link
+    event.preventDefault();
+
+    // Show the confirmation dialog
+    if (confirm("Are you sure you want to delete?!")) {
+        // If user presses OK, proceed to delete
+        // Redirect to the deletion URL with the ID
+        window.location.href = "?delete_id=" + id;
+    } else {
+        // If user presses Cancel, do nothing
+        console.log("Deletion canceled.");
+    }
+}
+</script>
 </head>
 
 <body>
@@ -60,13 +76,13 @@ $conn->close();
               name="coordinator_email"
               required />
           </div>
-          <div class="input">
+          <!-- <div class="input">
             <select class="option-menu" id="course_name" name="course_name">
             <option value="">Choose Course</option>
 
               <?php echo $options; ?>
             </select>
-          </div>
+          </div> -->
           <div class="input">
             <input class="submit-btn" type="submit" value="Add Co-Ordinator">
           </div>
@@ -86,7 +102,7 @@ $conn->close();
           <th>S.No</th>
           <th>Coordinator Name</th>
           <th>Coordinator Email</th>
-          <th>Course Name</th>
+          <!-- <th>Course Name</th> -->
           <th>Edit</th>
           <th>Delete</th>
         </tr>
@@ -123,7 +139,7 @@ $conn->close();
           $id = intval($_POST['id']);
           $name = $_POST['name'];
           $email = $_POST['email'];
-          $course = $_POST['course'];
+          // $course = $_POST['course'];
 
           $update_sql = "UPDATE coordinator SET name = ?, email = ?, course_name = ? WHERE id = ?";
           $stmt = $conn->prepare($update_sql);
@@ -148,9 +164,9 @@ $conn->close();
             echo '<td>' . $serialNo++ . '</td>';
             echo '<td>' . htmlspecialchars($row["name"]) . '</td>';
             echo '<td>' . htmlspecialchars($row["email"]) . '</td>';
-            echo '<td>' . htmlspecialchars($row["course_name"]) . '</td>';
+            // echo '<td>' . htmlspecialchars($row["course_name"]) . '</td>';
             echo '<td><a href="?edit_id=' . $row["id"] . '" class="button">Edit</a></td>';
-            echo '<td><a href="?delete_id=' . $row["id"] . '" class="button">Delete</a></td>';
+            echo '<td><a href="#" onclick="deleteDialog(event, ' . $row["id"] . ')" class="button">Delete</a></td>';
             echo '</tr>';
           }
         } else {
@@ -178,7 +194,7 @@ $conn->close();
             echo '<label for="email">Coordinator Email:</label>';
             echo '<input type="email" name="email" value="' . htmlspecialchars($row["email"]) . '" required>';
             echo '<label for="course">Course Name:</label>';
-            echo '<input type="text" name="course" value="' . htmlspecialchars($row["course_name"]) . '" required>';
+            // echo '<input type="text" name="course" value="' . htmlspecialchars($row["course_name"]) . '" required>';
             echo '<button type="submit" name="update">Update</button>';
             echo '</form>';
             echo '</div>';
@@ -189,7 +205,6 @@ $conn->close();
       </tbody>
     </table>
   </div>
-
 </body>
 
 </html>

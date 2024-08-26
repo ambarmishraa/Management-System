@@ -15,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get form data
     $coordinator_name = $_POST['coordinator_name'];
     $coordinator_email = $_POST['coordinator_email'];
-    $course_name = $_POST['course_name'];
+    // $course_name = $_POST['course_name'];
 
     // Prepare and bind
     $stmt = $conn->prepare("INSERT INTO coordinator (name, email, course_name) VALUES (?, ?, ?)");

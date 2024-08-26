@@ -35,6 +35,18 @@ $conn->close();
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Course</title>
+    <script>
+        function deleteDialog(event,id){
+            event.preventDefault();
+
+            if(confirm ("Are you sure you want to delete?!")){
+                window.location.href = "?delete_id=" + id;
+            }
+            else{
+                console.log("Deletion cancelled.");
+            }
+        }
+    </script>
 </head>
 
 <body>
@@ -149,7 +161,7 @@ $conn->close();
                         echo '<td>' . htmlspecialchars($row["course_code"]) . '</td>';
                         echo '<td>' . htmlspecialchars($row["coordinator_name"]) . '</td>';
                         echo '<td><a href="?edit_id=' . $row["id"] . '" class="button">Edit</a></td>';
-                        echo '<td><a href="?delete_id=' . $row["id"] . '" class="button">Delete</a></td>';
+                        echo '<td><a href="#" onclick="deleteDialog(event, ' . $row["id"] . ')" class="button">Delete</a></td>';
                         echo '</tr>';
                     }
                 } else {

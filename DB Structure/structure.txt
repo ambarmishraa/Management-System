@@ -1,0 +1,32 @@
+//Creation of Coordinator Table in Mysql
+CREATE TABLE coordinator (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    course_name VARCHAR(100) -- Adding the course_name column
+) ENGINE=InnoDB;
+
+//Creation of Course Table in Mysql
+CREATE TABLE course (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    course_name VARCHAR(100) NOT NULL,
+    course_code VARCHAR(50) NOT NULL,
+    coordinator_id INT,
+    FOREIGN KEY (coordinator_id) REFERENCES coordinator(id)
+) ENGINE=InnoDB;
+
+//Creation of Subject Table in Mysql
+CREATE TABLE subject(
+id INT AUTO_INCREMENT PRIMARY KEY,
+subject_name VARCHAR(100) NOT NULL,
+subject_code VARCHAR(100) NOT NULL
+) ENGINE=InnoDB;
+
+//Creation of Subject and Course relation Table in Mysql
+CREATE TABLE subCourse (
+id INT AUTO_INCREMENT PRIMARY KEY,
+course_id INT,
+FOREIGN KEY (course_id) REFERENCES course(id),
+subject_id INT,
+FOREIGN KEY (subject_id) REFERENCES subject(id)
+) ENGINE=InnoDB;

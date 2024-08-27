@@ -55,7 +55,7 @@ if ($subject_result->num_rows > 0) {
 
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $course_id = $_POST['course_id'];
+    $course_id = $_POST['course_id'] ?? null;
     $subject_ids = $_POST['subject_ids'] ?? null;
 
     if (is_array($subject_ids)) {
@@ -72,7 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
     } else {
-        echo "No subjects selected or incorrect form input.";
+        // echo "No subjects selected or incorrect form input.";
     }
 }
 

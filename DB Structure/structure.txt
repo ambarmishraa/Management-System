@@ -39,3 +39,13 @@ student_email VARCHAR(100) NOT NULL,
 course_id INT,
 FOREIGN KEY (course_id) REFERENCES course(id)
 ) ENGINE=InnoDB;
+
+//Creation of Marks Table in Mysql
+CREATE TABLE marks(
+id INT AUTO_INCREMENT PRIMARY KEY,
+student_id INT,
+FOREIGN KEY(student_id) REFERENCES student(id),
+subject_id INT,
+FOREIGN KEY (subject_id) REFERENCES subject(id),
+marks INT NOT NULL
+) ENGINE = InnoDB;

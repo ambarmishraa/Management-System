@@ -1,4 +1,4 @@
-<?php 
+<?php
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -6,27 +6,29 @@ $dbname = "student_db";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-if($conn->connect_error){
-    die("Connection failed :" . $conn->connect_error);
+if ($conn->connect_error) {
+  die("Connection failed :" . $conn->connect_error);
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-$stmt = $conn->prepare("INSERT INTO marks (student_id, subject_id, marks) VALUES (?, ?, ?)");
-$stmt->bind_param("iii", $student_id, $subject_id, $marks);
 
-$student_id = $_POST["student_name"];
-$subject_id = $_POST["subject_name"];
-$marks = $_POST["marks"];
+  $student_id = $_POST["student_name"];
+  $subject_id = $_POST["subject_name"];
+  $marks = $_POST["marks"];
 
-    // Execute and check if the record was inserted successfully
-    if ($stmt->execute()) {
-        echo "New coordinator added successfully";
-    } else {
-        echo "Error: " . $stmt->error;
-    }
+  $stmt = $conn->prepare("INSERT INTO marks (student_id, subject_id, marks) VALUES (?, ?, ?)");
+  $stmt->bind_param("iii", $student_id, $subject_id, $marks);
 
-    // Close statement and connection
-    $stmt->close();
+
+  // Execute and check if the record was inserted successfully
+  if ($stmt->execute()) {
+    echo "New Marks added successfully";
+  } else {
+    echo "Error: " . $stmt->error;
+  }
+
+  // Close statement and connection
+  $stmt->close();
 }
 $conn->close();
 ?>
@@ -72,6 +74,14 @@ $conn->close();
               name="student_name"
               required />
           </div>
+
+          <div class="input">
+            <select class="option-menu" id="course_id" name="course_id">
+              <option value="">Select Subject</option>
+
+              <?php echo $course_options; ?>
+            </select>
+          </div>
           <div class="input">
             <input
               class="field-1"
@@ -80,13 +90,6 @@ $conn->close();
               id="subject_name"
               name="subject_name"
               required />
-          </div>
-          <div class="input">
-            <select class="option-menu" id="course_id" name="course_id">
-              <option value="">Assign Marks</option>
-
-              <?php echo $course_options; ?>
-            </select>
           </div>
           <div class="input">
             <input class="submit-btn" type="submit" value="Add Marks">
@@ -115,11 +118,11 @@ $conn->close();
       </thead>
       <tbody>
 
-      <!-- Write your Code Here -->
+        <!-- Write your Code Here -->
 
-  </tbody>
+      </tbody>
     </table>
   </div>
 </body>
 
-</html>   
+</html>

@@ -43,14 +43,11 @@ $conn->close();
   <title>Student</title>
   <script>
     function deleteDialog(event, id) {
-      // Prevent the default action of the link
       event.preventDefault();
 
-      // Show the confirmation dialog
       if (confirm("Are you sure you want to delete?!")) {
         window.location.href = "?delete_id=" + id;
       } else {
-        // If user presses Cancel, do nothing
         console.log("Deletion cancelled.");
       }
     }
@@ -136,7 +133,6 @@ $conn->close();
             echo "Error deleting record: " . $conn->error;
           }
 
-          // Reload the page to reflect changes
           header("Location: " . $_SERVER['PHP_SELF']);
           exit();
         }

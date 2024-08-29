@@ -4,15 +4,12 @@ $username = "root";
 $password = "";
 $dbname = "student_db";
 
-// Create a new connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// Check the connection
 if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
 
-// Fetch subjects
 $subject_id_name = "SELECT id, subject_name FROM subject";
 $result_subject_id_name = $conn->query($subject_id_name);
 
@@ -25,7 +22,6 @@ if ($result_subject_id_name->num_rows > 0) {
   $fetched_subject_id_name = "<option value=''>No Subjects available</option>";
 }
 
-// Fetch students
 $student_id_name = "SELECT id, student_name FROM student";
 $result_student_id_name = $conn->query($student_id_name);
 
@@ -38,7 +34,6 @@ if ($result_student_id_name->num_rows > 0) {
   $fetched_student_id_name = "<option value=''>No Students Available</option>";
 }
 
-// Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $student_id = $_POST["student_id"];
   $subject_id = $_POST["subject_id"];
@@ -54,12 +49,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   }
   $stmt->close();
 
-  // Redirect to prevent form re-submission on refresh
   header("Location: marks_interface.php");
   exit();
 }
 
-// Fetch and display marks data
 $marks_query = "SELECT marks.id AS marks_id, marks.student_id, marks.subject_id, marks.marks, 
                student.student_name, subject.subject_name
               FROM marks, student, subject
@@ -69,7 +62,6 @@ $marks_query = "SELECT marks.id AS marks_id, marks.student_id, marks.subject_id,
 
 $marks_result = $conn->query($marks_query);
 
-// Close the connection
 $conn->close();
 ?>
 

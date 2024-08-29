@@ -8,16 +8,11 @@
   <title>Subject</title>
   <script>
 function deleteDialog(event, id) {
-    // Prevent the default action of the link
     event.preventDefault();
 
-    // Show the confirmation dialog
     if (confirm("Are you sure you want to delete?!")) {
-        // If user presses OK, proceed to delete
-        // Redirect to the deletion URL with the ID
         window.location.href = "?delete_id=" + id;
     } else {
-        // If user presses Cancel, do nothing
         console.log("Deletion canceled.");
     }
 }

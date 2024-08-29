@@ -10,14 +10,13 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Fetch both id and name from the coordinator table
+
 $sql = "SELECT id, name FROM coordinator";
 $result = $conn->query($sql);
 
 $options = "";
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        // Use id as the value and name as the display text
         $options .= "<option value='" . htmlspecialchars($row["id"]) . "'>" . htmlspecialchars($row["name"]) . "</option>";
     }
 } else {

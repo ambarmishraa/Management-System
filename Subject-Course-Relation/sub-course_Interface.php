@@ -192,7 +192,6 @@ if (isset($_GET['edit_id'])) {
                     <input type="hidden" name="edit_course_id" value="<?php echo $edit_course_id; ?>">
                     <p>Select subjects to update:</p>
                     <?php
-                    // Generate the subject checkboxes
                     $sql_subject = "SELECT id, subject_name FROM subject";
                     $subject_result = $conn->query($sql_subject);
 
@@ -245,7 +244,6 @@ if (isset($_GET['edit_id'])) {
                         $subject_name = $row['subject_name'];
                         $subcourse_id = $row['subcourse_id'];
 
-                        // Initialize course entry if not already set
                         if (!isset($course_subject_map[$course_id])) {
                             $course_subject_map[$course_id] = [
                                 'course_name' => $course_name,
@@ -253,7 +251,6 @@ if (isset($_GET['edit_id'])) {
                             ];
                         }
 
-                        // Append subject to the corresponding course
                         $course_subject_map[$course_id]['subjects'][] = $subject_name;
                     }
 

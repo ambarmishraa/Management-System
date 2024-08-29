@@ -17,7 +17,6 @@ $course_id = $_POST["course_id"];
 
 $stmt = $conn->prepare("INSERT INTO student (student_name, student_email, course_id) VALUES (?, ?, ?)");
 $stmt->bind_param("ssi", $student_name, $student_email, $course_id);
-    // Execute and check if the record was inserted successfully
     if ($stmt->execute()) {
         echo "New coordinator added successfully";
     } else {
@@ -25,7 +24,6 @@ $stmt->bind_param("ssi", $student_name, $student_email, $course_id);
     }
     header("Location: student_Interface.php");
     exit();
-    // Close statement and connection
     $stmt->close();
 }
 

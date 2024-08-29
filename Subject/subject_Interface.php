@@ -134,7 +134,7 @@ function deleteDialog(event, id) {
           $stmt->close();
 
           if ($row) {
-            echo '<div class="form-container">';
+            echo '<div class="form-container" id="edit-form-container">';
             echo '<h3>Edit Subject</h3>';
             echo '<form method="post" action="">';
             echo '<input type="hidden" name="id" value="' . $row["id"] . '">';
@@ -159,7 +159,8 @@ function deleteDialog(event, id) {
               echo "<td>" . $row["id"] . "</td>";
               echo "<td>" . $row["subject_name"] . "</td>";
               echo "<td>" . $row["subject_code"] . "</td>";
-              echo '<td><a href="?edit_id=' . $row["id"] . '" class="button">Edit</a></td>';
+              // echo '<td><a href="?edit_id=' . $row["id"] . '" class="button">Edit</a></td>';
+            echo '<td><a href="?edit_id=' . $row["id"] . '#edit-form-container" class="button">Edit</a></td>';
               echo '<td><a href="#" onclick="deleteDialog(event, ' . $row["id"] . ')" class="button">Delete</a></td>';
               echo '</tr>';
           }

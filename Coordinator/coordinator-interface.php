@@ -35,21 +35,22 @@ $conn->close();
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Coordinator</title>
   <script>
-function deleteDialog(event, id) {
-    // Prevent the default action of the link
-    event.preventDefault();
+    function deleteDialog(event, id) {
 
-    // Show the confirmation dialog
-    if (confirm("Are you sure you want to delete?!")) {
-        // If user presses OK, proceed to delete
-        // Redirect to the deletion URL with the ID
+      event.preventDefault();
+
+
+      if (confirm("Are you sure you want to delete?!")) {
+
         window.location.href = "?delete_id=" + id;
-    } else {
-        // If user presses Cancel, do nothing
+      } else {
+
         console.log("Deletion canceled.");
+      }
     }
-}
-</script>
+
+  
+  </script>
 </head>
 
 <body>
@@ -157,15 +158,15 @@ function deleteDialog(event, id) {
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {
-          // Output data for each row
-          $serialNo = 1; // Initialize serial number
+
+          $serialNo = 1;
           while ($row = $result->fetch_assoc()) {
             echo '<tr>';
             echo '<td>' . $serialNo++ . '</td>';
             echo '<td>' . htmlspecialchars($row["name"]) . '</td>';
             echo '<td>' . htmlspecialchars($row["email"]) . '</td>';
-            // echo '<td>' . htmlspecialchars($row["course_name"]) . '</td>';
-            echo '<td><a href="?edit_id=' . $row["id"] . '" class="button">Edit</a></td>';
+            // echo '<td><a href="?edit_id=' . $row["id"] . '" class="button">Edit</a></td>';
+            echo '<td><a href="?edit_id=' . $row["id"] . '#edit-form-container" class="button">Edit</a></td>';
             echo '<td><a href="#" onclick="deleteDialog(event, ' . $row["id"] . ')" class="button">Delete</a></td>';
             echo '</tr>';
           }
@@ -182,10 +183,11 @@ function deleteDialog(event, id) {
           $stmt->execute();
           $result = $stmt->get_result();
           $row = $result->fetch_assoc();
+
           $stmt->close();
 
           if ($row) {
-            echo '<div class="form-container">';
+            echo '<div class="form-container" id="edit-form-container">';
             echo '<h3>Edit Coordinator</h3>';
             echo '<form method="post" action="">';
             echo '<input type="hidden" name="id" value="' . $row["id"] . '">';

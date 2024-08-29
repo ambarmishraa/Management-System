@@ -39,7 +39,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         echo "Error: The coordinator ID does not exist.";
     }
-
+    header("Location: course-interface.php");
+    exit();
     // Close coordinator check statement
     $coordinator_check->close();
 }

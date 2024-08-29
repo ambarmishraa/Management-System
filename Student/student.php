@@ -23,7 +23,8 @@ $stmt->bind_param("ssi", $student_name, $student_email, $course_id);
     } else {
         echo "Error: " . $stmt->error;
     }
-
+    header("Location: student_Interface.php");
+    exit();
     // Close statement and connection
     $stmt->close();
 }

@@ -24,7 +24,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     else{
         echo "Error : " . $stmt->error;
     }
-
+    header("Location: subject_interface.php");
+    exit();
     $stmt->close();
 }
 $conn->close();

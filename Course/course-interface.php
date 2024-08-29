@@ -160,7 +160,9 @@ $conn->close();
                         echo '<td>' . htmlspecialchars($row["course_name"]) . '</td>';
                         echo '<td>' . htmlspecialchars($row["course_code"]) . '</td>';
                         echo '<td>' . htmlspecialchars($row["coordinator_name"]) . '</td>';
-                        echo '<td><a href="?edit_id=' . $row["id"] . '" class="button">Edit</a></td>';
+                        // echo '<td><a href="?edit_id=' . $row["id"] . '" class="button">Edit</a></td>';
+            echo '<td><a href="?edit_id=' . $row["id"] . '#edit-form-container" class="button">Edit</a></td>';
+
                         echo '<td><a href="#" onclick="deleteDialog(event, ' . $row["id"] . ')" class="button">Delete</a></td>';
                         echo '</tr>';
                     }
@@ -184,7 +186,7 @@ $conn->close();
                         $coordinator_sql = "SELECT id, name FROM coordinator";
                         $coordinator_result = $conn->query($coordinator_sql);
 
-                        echo '<div class="form-container">';
+                        echo '<div class="form-container" id="edit-form-container">';
                         echo '<h3>Edit Course</h3>';
                         echo '<form method="post" action="">';
                         echo '<input type="hidden" name="id" value="' . $row["id"] . '">';

@@ -4,36 +4,74 @@ $username = "root";
 $password = "";
 $dbname = "student_db";
 
+// Create a new connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
+// Check the connection
 if ($conn->connect_error) {
-  die("Connection failed :" . $conn->connect_error);
+  die("Connection failed: " . $conn->connect_error);
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+// Fetch subjects
+$subject_id_name = "SELECT id, subject_name FROM subject";
+$result_subject_id_name = $conn->query($subject_id_name);
 
-  $student_id = $_POST["student_name"];
-  $subject_id = $_POST["subject_name"];
+$fetched_subject_id_name = "";
+if ($result_subject_id_name->num_rows > 0) {
+  while ($row = $result_subject_id_name->fetch_assoc()) {
+    $fetched_subject_id_name .= "<option value='" . htmlspecialchars($row["id"]) . "'>" . htmlspecialchars($row["subject_name"]) . "</option>";
+  }
+} else {
+  $fetched_subject_id_name = "<option value=''>No Subjects available</option>";
+}
+
+// Fetch students
+$student_id_name = "SELECT id, student_name FROM student";
+$result_student_id_name = $conn->query($student_id_name);
+
+$fetched_student_id_name = "";
+if ($result_student_id_name->num_rows > 0) {
+  while ($row = $result_student_id_name->fetch_assoc()) {
+    $fetched_student_id_name .= "<option value='" . htmlspecialchars($row["id"]) . "'>" . htmlspecialchars($row["student_name"]) . "</option>";
+  }
+} else {
+  $fetched_student_id_name = "<option value=''>No Students Available</option>";
+}
+
+// Handle form submission
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  $student_id = $_POST["student_id"];
+  $subject_id = $_POST["subject_id"];
   $marks = $_POST["marks"];
 
   $stmt = $conn->prepare("INSERT INTO marks (student_id, subject_id, marks) VALUES (?, ?, ?)");
   $stmt->bind_param("iii", $student_id, $subject_id, $marks);
 
-
-  // Execute and check if the record was inserted successfully
   if ($stmt->execute()) {
     echo "New Marks added successfully";
   } else {
     echo "Error: " . $stmt->error;
   }
-
-  // Close statement and connection
   $stmt->close();
+
+  // Redirect to prevent form re-submission on refresh
+  header("Location: marks_interface.php");
+  exit();
 }
+
+// Fetch and display marks data
+$marks_query = "SELECT marks.id AS marks_id, marks.student_id, marks.subject_id, marks.marks, 
+               student.student_name, subject.subject_name
+              FROM marks, student, subject
+              WHERE marks.student_id = student.id
+              AND marks.subject_id = subject.id
+              ORDER BY student.id";
+
+$marks_result = $conn->query($marks_query);
+
+// Close the connection
 $conn->close();
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -45,15 +83,9 @@ $conn->close();
   <title>Marks</title>
   <script>
     function deleteDialog(event, id) {
-      // Prevent the default action of the link
       event.preventDefault();
-
-      // Show the confirmation dialog
       if (confirm("Are you sure you want to delete?!")) {
         window.location.href = "?delete_id=" + id;
-      } else {
-        // If user presses Cancel, do nothing
-        console.log("Deletion cancelled.");
       }
     }
   </script>
@@ -62,34 +94,23 @@ $conn->close();
 <body>
   <div class="left-half">
     <div class="inner-container">
-      <form action="Marks/marks_interface.php" method="post">
+      <form action="marks_interface.php" method="post">
         <div class="input-box">
           <h1 style="padding-left: 93px;">Add Marks</h1>
           <div class="input">
-            <input
-              class="field"
-              placeholder="Student Name"
-              type="text"
-              id="student_name"
-              name="student_name"
-              required />
-          </div>
-
-          <div class="input">
-            <select class="option-menu" id="course_id" name="course_id">
-              <option value="">Select Subject</option>
-
-              <?php echo $course_options; ?>
+            <select class="option-menu" id="student_id" name="student_id">
+              <option value="">Select Student</option>
+              <?php echo $fetched_student_id_name; ?>
             </select>
           </div>
           <div class="input">
-            <input
-              class="field-1"
-              placeholder="Subject Name"
-              type="text"
-              id="subject_name"
-              name="subject_name"
-              required />
+            <select class="option-menu" id="subject_id" name="subject_id">
+              <option value="">Select Subject</option>
+              <?php echo $fetched_subject_id_name; ?>
+            </select>
+          </div>
+          <div class="input">
+            <input class="field-1" placeholder="Fills Marks" type="number" id="marks" name="marks" required />
           </div>
           <div class="input">
             <input class="submit-btn" type="submit" value="Add Marks">
@@ -98,11 +119,9 @@ $conn->close();
             <h4 style="color: red; margin-left:10px;">View Table</h4>
           </a>
         </div>
-
       </form>
     </div>
   </div>
-
 
   <div class="right-half" id="right-half">
     <table border="1">
@@ -117,9 +136,24 @@ $conn->close();
         </tr>
       </thead>
       <tbody>
-
-        <!-- Write your Code Here -->
-
+        <?php
+        if ($marks_result->num_rows > 0) {
+          $index = 1;
+          while ($row = $marks_result->fetch_assoc()) {
+            echo "<tr>";
+            echo "<td>{$index}</td>";
+            echo "<td>{$row['student_name']}</td>";
+            echo "<td>{$row['subject_name']}</td>";
+            echo "<td>{$row['marks']}</td>";
+            echo "<td><a href='?edit_id={$row['marks_id']}' class='button'>Edit</a></td>";
+            echo "<td><a href='#' onclick='deleteDialog(event, {$row['marks_id']})' class='button'>Delete</a></td>";
+            echo "</tr>";
+            $index++;
+          }
+        } else {
+          echo "<tr><td colspan='6'>No records found</td></tr>";
+        }
+        ?>
       </tbody>
     </table>
   </div>

@@ -71,6 +71,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo "Error preparing statement: " . $conn->error;
         }
     }
+
+    header("Location: sub-course_Interface.php");
+    exit();
 }
 
 $conn->close();
@@ -215,38 +218,6 @@ $conn->close();
 </body>
 
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 <!-- // Handle deletion

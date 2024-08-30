@@ -53,9 +53,9 @@ function deleteDialog(event, id) {
           <div class="input">
             <input class="submit-btn" type="submit" value="Add Subject">
           </div>
-          <a href="#right-half">
-            <h4 style="color: red; margin-left:10px;">View Table</h4>
-          </a>
+          <div style="color: red; margin-left:40%;">
+              <button style="background-color: #fff; border-radius:10px; padding:4px"><a href="#right-half">View Table</a></button>
+            </div>
         </div>
 
       </form>

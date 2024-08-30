@@ -114,3 +114,12 @@ h1{
   margin-top: 18px;
   color: black;
 }
+
+.error {
+  color: red;
+  font-size: 14px;
+}
+.success {
+  color: green;
+  font-size: 14px;
+}

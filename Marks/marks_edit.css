@@ -1,0 +1,41 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: rgb(2, 0, 36);
+  background: linear-gradient(
+    90deg,
+    rgba(131, 58, 180, 1) 0%,
+    rgba(253, 29, 29, 1) 50%,
+    rgba(252, 176, 69, 1) 100%
+  );
+  display: flex;
+  justify-content: center;
+
+}
+
+.main-container {
+    background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  height: 100vh;
+  width: 70vw;
+}
+
+table {
+  margin-top: 20%;
+  margin-left: 1.5%;
+  th {
+    padding: 5px;
+  }
+  td {
+    padding: 5px;
+  }
+}
+input{
+    padding:10px;
+    border-radius:10px
+}

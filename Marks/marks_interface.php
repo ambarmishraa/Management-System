@@ -10,6 +10,23 @@ if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
 
+ // Handle deletion
+ if (isset($_GET['delete_id'])) {
+  $id = intval($_GET['delete_id']);
+  $delete_sql = "DELETE FROM marks WHERE id = ?";
+  $stmt = $conn->prepare($delete_sql);
+  $stmt->bind_param("i", $id);
+  $stmt->execute();
+  $stmt->close();
+
+  // Reload the page to reflect changes
+  header("Location: " . $_SERVER['PHP_SELF']);
+  exit();
+}
+
+$last_student_name = "";
+$index = 1;
+
 $subject_id_name = "SELECT id, subject_name FROM subject";
 $result_subject_id_name = $conn->query($subject_id_name);
 
@@ -129,15 +146,30 @@ $conn->close();
       </thead>
       <tbody>
         <?php
-        if ($marks_result->num_rows > 0) {
-          $index = 1;
+         if ($marks_result->num_rows > 0) {
+          $is_first_row = true; // Flag to handle the first row of each student
           while ($row = $marks_result->fetch_assoc()) {
-            echo "<tr>";
-            echo "<td>{$index}</td>";
-            echo "<td>{$row['student_name']}</td>";
+            if ($last_student_name != $row['student_name']) {
+              // Print the serial number for the first row of a new student
+              if (!$is_first_row) {
+                echo "<tr class='gap-row'><td colspan='6'></td></tr>";
+              }
+              echo "<tr>";
+              echo "<td>{$index}</td>";
+              echo "<td>{$row['student_name']}</td>";
+              $last_student_name = $row['student_name'];
+              $index++;
+              $is_first_row = false; // Subsequent rows for the same student
+            } else {
+              // Skip printing the serial number and student name for subsequent rows with the same student
+              echo "<tr>";
+              echo "<td></td>"; // Empty serial number cell
+              echo "<td></td>"; // Empty student name cell
+            }
             echo "<td>{$row['subject_name']}</td>";
             echo "<td>{$row['marks']}</td>";
-            echo "<td><a href='?edit_id={$row['marks_id']}' class='button'>Edit</a></td>";
+            // echo "<td><p>{$row['marks_id']}</p></td>";
+            echo "<td><a href='marks_edit.php?edit_id={$row['marks_id']}' class='button'>Edit</a></td>";
             echo "<td><a href='#' onclick='deleteDialog(event, {$row['marks_id']})' class='button'>Delete</a></td>";
             echo "</tr>";
             $index++;

@@ -37,7 +37,7 @@ id INT AUTO_INCREMENT PRIMARY KEY,
 student_name VARCHAR(100) NOT NULL,
 student_email VARCHAR(100) NOT NULL,
 course_id INT,
-FOREIGN KEY (course_id) REFERENCES course(id)
+FOREIGN KEY (course_id) REFERENCES course(id) 
 ) ENGINE=InnoDB;
 
 //Creation of Marks Table in Mysql

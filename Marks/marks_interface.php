@@ -34,18 +34,19 @@ $fetched_subject_id_name = "";
 if ($result_subject_id_name->num_rows > 0) {
   while ($row = $result_subject_id_name->fetch_assoc()) {
     $fetched_subject_id_name .= "<option value='" . htmlspecialchars($row["id"]) . "'>" . htmlspecialchars($row["subject_name"]) . "</option>";
+    
   }
 } else {
   $fetched_subject_id_name = "<option value=''>No Subjects available</option>";
 }
 
-$student_id_name = "SELECT id, student_name FROM student";
+$student_id_name = "SELECT id, student_name, course_id FROM student";
 $result_student_id_name = $conn->query($student_id_name);
 
 $fetched_student_id_name = "";
 if ($result_student_id_name->num_rows > 0) {
   while ($row = $result_student_id_name->fetch_assoc()) {
-    $fetched_student_id_name .= "<option value='" . htmlspecialchars($row["id"]) . "'>" . htmlspecialchars($row["student_name"]) . "</option>";
+    $fetched_student_id_name .= "<option value='" . htmlspecialchars($row["id"]) . "' data-course-id='" . htmlspecialchars($row["course_id"]) . "'>" . htmlspecialchars($row["student_name"]) . "</option>";
   }
 } else {
   $fetched_student_id_name = "<option value=''>No Students Available</option>";
@@ -97,6 +98,28 @@ $conn->close();
         window.location.href = "?delete_id=" + id;
       }
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+  var studentSelect = document.getElementById('student_id');
+  
+  if (studentSelect) {
+    studentSelect.addEventListener('change', function() {
+      var studentId = this.value; // Get the selected student's ID
+
+      // Get the selected option element
+      var selectedOption = studentSelect.options[studentSelect.selectedIndex];
+      
+      // Check if data-course-id exists and is not null
+      var courseId = selectedOption ? selectedOption.getAttribute('data-course-id') : null;
+
+      // Log both the student ID and course ID to the console
+      console.log("Selected Student ID: " + studentId);
+      console.log("Course ID: " + courseId);
+    });
+  } else {
+    console.error('Element with ID "student_id" not found.');
+  }
+});
   </script>
 </head>
 
@@ -117,6 +140,7 @@ $conn->close();
               <option value="">Select Subject</option>
               <?php echo $fetched_subject_id_name; ?>
             </select>
+            
           </div>
           <div class="input">
             <input class="field-1" placeholder="Fills Marks" type="number" id="marks" name="marks" required />
@@ -183,4 +207,4 @@ $conn->close();
   </div>
 </body>
 
-</html>
+</html> hjkhjk

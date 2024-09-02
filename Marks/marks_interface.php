@@ -10,6 +10,12 @@ if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
 
+if (isset($_GET['student_id'] )) {
+  $student_id = intval($_GET['student_id']);
+  // Use $student_id to fetch and display the student's marks
+  echo "<script>console.log('Student ID: " . $student_id . "');</script>";
+}
+
 // Handle deletion
 if (isset($_GET['delete_id'])) {
   $id = intval($_GET['delete_id']);
@@ -156,7 +162,7 @@ $conn->close();
           <div class="input">
             <select class="option-menu" id="student_id" name="student_id">
               <option value="">Select Student</option>
-              <?php echo $fetched_student_id_name; ?>
+              <?php echo $student_id; ?>
             </select>
           </div>
           <div class="input">
@@ -227,4 +233,4 @@ $conn->close();
   </div>
 </body>
 
-</html>
+</html> 

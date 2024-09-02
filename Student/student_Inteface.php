@@ -10,7 +10,7 @@ if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
 
-// Query for fetching the course names and id starts
+// Query for fetching the course names and id
 $sql_course = "SELECT id, course_name FROM course";
 $course_result = $conn->query($sql_course);
 
@@ -25,28 +25,22 @@ if ($course_result->num_rows > 0) {
 } else {
   $course_options = "<option value=''>No courses available</option>";
 }
-// Query for fetching the course names and id ends
 
-// Associative array for students
-$studentsArray = [];
+// Fetch subject data
+$sql_subject = "SELECT id, subject_name FROM subject";
+$subject_result = $conn->query($sql_subject);
 
-// Fetching student data
-$sql_student = "SELECT id, student_name, course_id FROM student";
-$student_result = $conn->query($sql_student);
-
-if ($student_result->num_rows > 0) {
-  while ($row = $student_result->fetch_assoc()) {
-    $studentsArray[$row['id']] = [
-      'student_name' => $row['student_name'],
-      'course_id' => $row['course_id']
-    ];
+$subjectArray = [];
+if ($subject_result->num_rows > 0) {
+  while ($row = $subject_result->fetch_assoc()) {
+    $subjectArray[$row['id']] = $row['subject_name'];
   }
 }
 
 // Associative array for course_id to subcourse mapping
 $courseToSubcourse = [];
 
-// Fetching subcourse data
+// Fetch subcourse data
 $sql_subcourse = "SELECT course_id, id, subject_id FROM subcourse";
 $subcourse_result = $conn->query($sql_subcourse);
 
@@ -60,10 +54,27 @@ if ($subcourse_result->num_rows > 0) {
       $courseToSubcourse[$course_id] = [];
     }
     
+    $subject_name = isset($subjectArray[$subject_id]) ? $subjectArray[$subject_id] : 'Unknown';
+
     $courseToSubcourse[$course_id][] = [
       'id' => $subcourse_id,
       'course_id' => $course_id,
-      'subject_id' => $subject_id
+      'subject_id' => $subject_id,
+      'subject_name' => $subject_name
+    ];
+  }
+}
+
+// Fetch student data
+$studentsArray = [];
+$sql_student = "SELECT id, student_name, course_id FROM student";
+$student_result = $conn->query($sql_student);
+
+if ($student_result->num_rows > 0) {
+  while ($row = $student_result->fetch_assoc()) {
+    $studentsArray[$row['id']] = [
+      'student_name' => $row['student_name'],
+      'course_id' => $row['course_id']
     ];
   }
 }
@@ -169,7 +180,7 @@ $conn->close();
         // Handle deletion
         if (isset($_GET['delete_id'])) {
           $id = intval($_GET['delete_id']);
-          $delete_sql = "DELETE FROM subject WHERE id = $id";
+          $delete_sql = "DELETE FROM student WHERE id = $id";
 
           if ($conn->query($delete_sql) === TRUE) {
             echo "Record deleted successfully";
@@ -184,12 +195,12 @@ $conn->close();
         // Handle edit form submission
         if (isset($_POST['update'])) {
           $id = intval($_POST['id']);
-          $subject_name = $_POST['subject_name'];
-          $subject_code = $_POST['subject_code'];
+          $student_name = $_POST['student_name'];
+          $course_id = $_POST['course_id'];
 
-          $update_sql = "UPDATE subject SET subject_name = ?, subject_code = ? WHERE id = ?";
+          $update_sql = "UPDATE student SET student_name = ?, course_id = ? WHERE id = ?";
           $stmt = $conn->prepare($update_sql);
-          $stmt->bind_param("ssi", $subject_name, $subject_code, $id);
+          $stmt->bind_param("sii", $student_name, $course_id, $id);
           $stmt->execute();
           $stmt->close();
 
@@ -245,22 +256,14 @@ $conn->close();
             echo "<td>" . $row["id"] . "</td>";
             echo "<td>" . $row["student_name"] . "</td>";
             echo "<td>" . $row["student_email"] . "</td>";
-
-            $course_id = $row["course_id"];
-
-            if (isset($courseName[$course_id])) {
-              echo "<td>" . $courseName[$course_id] . "</td>";
-            } else {
-              echo "<td>Not Assigned</td>";
-            }
-
-            echo "<td><a href='?edit_id=" . $row["id"] . "'>Edit</a></td>";
-            echo "<td><a href='' onclick='deleteDialog(event, " . $row["id"] . ")'>Delete</a></td>";
-            echo "<td><a href='/Marks/marks_interface.php?id=" . $row["id"] . "'>Add Marks</a></td>";
+            echo "<td>" . (isset($courseName[$row["course_id"]]) ? $courseName[$row["course_id"]] : 'Unknown') . "</td>";
+            echo '<td><a href="?edit_id=' . $row["id"] . '">Edit</a></td>';
+            echo '<td><a href="#" onclick="deleteDialog(event, ' . $row["id"] . ')">Delete</a></td>';
+            echo '<td><a href="#">Add Marks</a></td>';
             echo "</tr>";
           }
         } else {
-          echo "<tr><td colspan='7'>No students found</td></tr>";
+          echo "<tr><td colspan='7'>No records found</td></tr>";
         }
 
         $conn->close();

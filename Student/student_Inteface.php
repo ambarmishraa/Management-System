@@ -10,14 +10,12 @@ if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
 
-// Query for fetching the course names and id
+// Fetch course data
 $sql_course = "SELECT id, course_name FROM course";
 $course_result = $conn->query($sql_course);
-
 $course_options = "";
 if ($course_result->num_rows > 0) {
-  $courses = $course_result->fetch_all(MYSQLI_ASSOC);
-  foreach ($courses as $row) {
+  while ($row = $course_result->fetch_assoc()) {
     $course_id = $row["id"];
     $course_name = $row["course_name"];
     $course_options .= "<option value='$course_id'>$course_name</option>";
@@ -29,7 +27,6 @@ if ($course_result->num_rows > 0) {
 // Fetch subject data
 $sql_subject = "SELECT id, subject_name FROM subject";
 $subject_result = $conn->query($sql_subject);
-
 $subjectArray = [];
 if ($subject_result->num_rows > 0) {
   while ($row = $subject_result->fetch_assoc()) {
@@ -37,25 +34,21 @@ if ($subject_result->num_rows > 0) {
   }
 }
 
-// Associative array for course_id to subcourse mapping
-$courseToSubcourse = [];
-
 // Fetch subcourse data
+$courseToSubcourse = [];
 $sql_subcourse = "SELECT course_id, id, subject_id FROM subcourse";
 $subcourse_result = $conn->query($sql_subcourse);
-
 if ($subcourse_result->num_rows > 0) {
   while ($row = $subcourse_result->fetch_assoc()) {
     $course_id = $row['course_id'];
     $subcourse_id = $row['id'];
     $subject_id = $row['subject_id'];
-    
+
     if (!isset($courseToSubcourse[$course_id])) {
       $courseToSubcourse[$course_id] = [];
     }
-    
-    $subject_name = isset($subjectArray[$subject_id]) ? $subjectArray[$subject_id] : 'Unknown';
 
+    $subject_name = isset($subjectArray[$subject_id]) ? $subjectArray[$subject_id] : 'Unknown';
     $courseToSubcourse[$course_id][] = [
       'id' => $subcourse_id,
       'course_id' => $course_id,
@@ -69,23 +62,40 @@ if ($subcourse_result->num_rows > 0) {
 $studentsArray = [];
 $sql_student = "SELECT id, student_name, course_id FROM student";
 $student_result = $conn->query($sql_student);
-
 if ($student_result->num_rows > 0) {
   while ($row = $student_result->fetch_assoc()) {
     $studentsArray[$row['id']] = [
+      'studentid' => $row['id'],
       'student_name' => $row['student_name'],
       'course_id' => $row['course_id']
     ];
   }
 }
 
-// Encode studentsArray and courseToSubcourse as JSON for JavaScript
-$studentsArrayJson = json_encode($studentsArray);
-$courseToSubcourseJson = json_encode($courseToSubcourse);
+// Map students to subjects
+$studentsWithSubjects = [];
+foreach ($studentsArray as $studentId => $student) {
+  $courseId = $student['course_id'];
+
+  if (isset($courseToSubcourse[$courseId])) {
+    $studentsWithSubjects[$studentId] = [
+      'studentid' => $student['studentid'],
+      'student_name' => $student['student_name'],
+      'subjects' => $courseToSubcourse[$courseId]
+    ];
+  } else {
+    $studentsWithSubjects[$studentId] = [
+      'student_name' => $student['student_name'],
+      'subjects' => [] // No subjects found for the course
+    ];
+  }
+}
+
+$studentsWithSubjectsJson = json_encode($studentsWithSubjects);
+$subjectArrayJson = json_encode($subjectArray);
 
 $conn->close();
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -94,24 +104,51 @@ $conn->close();
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Student</title>
   <script>
-    function deleteDialog(event, id) {
-      event.preventDefault();
+   document.addEventListener("DOMContentLoaded", function() {
+  // Ensure studentsWithSubjects and subjectArray are defined
+  var studentsWithSubjects = <?php echo $studentsWithSubjectsJson; ?>;
+  var subjectArray = <?php echo $subjectArrayJson; ?>;
 
-      if (confirm("Are you sure you want to delete?!")) {
-        window.location.href = "?delete_id=" + id;
-      } else {
-        console.log("Deletion cancelled.");
-      }
+  if (typeof studentsWithSubjects !== 'object' || typeof subjectArray !== 'object') {
+    console.error('studentsWithSubjects or subjectArray is not defined or is not an object');
+    return;
+  }
+
+  // Log data to the console for debugging
+  console.log("Students with Subjects:", studentsWithSubjects);
+  // console.log("Subject Array:", subjectArray);
+
+  // Function to handle "Add Marks" click event
+  window.addMarks = function(studentId) {
+    if (studentsWithSubjects.hasOwnProperty(studentId)) {
+      var student = studentsWithSubjects[studentId];
+      var studentName = student.student_name;
+      var subjects = student.subjects.map(sub => ({
+        subject_id: sub.subject_id,
+        subject_name: sub.subject_name
+      }));
+
+      // Create a new object with the student's ID, name, and subjects
+      var result = {
+        studentid: studentId,
+        student_name: studentName,
+        subjects: subjects
+      };
+
+      // Save the result and subject array to local storage
+      localStorage.setItem('studentResult', JSON.stringify(result));
+      // localStorage.setItem('subjectArray', JSON.stringify(subjectArray));
+
+      // Log the result to the console
+      console.log("Student Details:", result);
+      console.log("Subject Array in Local Storage:", subjectArray);
+
+      // Navigate to the new PHP page
+      window.location.href = '/Marks/marks_interface.php?id=' + encodeURIComponent(studentId);
+    } else {
+      console.log("Student with ID " + studentId + " not found.");
     }
-
-    document.addEventListener("DOMContentLoaded", function() {
-      // Get the PHP associative arrays in JavaScript
-      var studentsArray = <?php echo $studentsArrayJson; ?>;
-      console.log("Students Array:", studentsArray);
-
-      var courseToSubcourse = <?php echo $courseToSubcourseJson; ?>;
-      console.log("Course to Subcourse Mapping:", courseToSubcourse);
-    });
+  };});
   </script>
 </head>
 <body>
@@ -148,8 +185,8 @@ $conn->close();
             <input class="submit-btn" type="submit" value="Add Student">
           </div>
           <div style="color: red; margin-left:40%;">
-              <button style="background-color: #fff; border-radius:10px; padding:4px"><a href="#right-half">View Table</a></button>
-            </div>
+            <button style="background-color: #fff; border-radius:10px; padding:4px"><a href="#right-half">View Table</a></button>
+          </div>
         </div>
       </form>
     </div>
@@ -222,48 +259,47 @@ $conn->close();
           if ($row) {
             echo '<div class="form-container" id="#edit-form-container">';
             echo '<h3>Edit Student</h3>';
-            echo '<form method="post" action="">';
-            echo '<input type="hidden" name="id" value="' . $row["id"] . '">';
-            echo '<label for="student_name">Student Name:</label>';
-            echo '<input type="text" name="student_name" value="' . $row["student_name"] . '" required>';
-            echo '<label for="course_id">Course Code :</label>';
-            echo '<input type="text" name="course_id" value="' . $row["course_id"] . '" required>';
+            echo '<form method="post" action="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '">';
+            echo '<input type="hidden" name="id" value="' . $row['id'] . '">';
+            echo '<div class="input-box">';
+            echo '<input type="text" name="student_name" value="' . $row['student_name'] . '" required>';
+            echo '<select name="course_id" required>';
 
+            $course_result = $conn->query("SELECT id, course_name FROM course");
+            while ($course = $course_result->fetch_assoc()) {
+              $selected = $course['id'] == $row['course_id'] ? 'selected' : '';
+              echo '<option value="' . $course['id'] . '" ' . $selected . '>' . $course['course_name'] . '</option>';
+            }
+
+            echo '</select>';
             echo '<button type="submit" name="update">Update</button>';
+            echo '</div>';
             echo '</form>';
             echo '</div>';
           }
         }
 
-        // Fetch and display students data
-        $course_sql = "SELECT id, course_name FROM course";
-        $course_result = $conn->query($course_sql);
-        $courseName = [];
-        if ($course_result->num_rows > 0) {
-          foreach ($course_result as $row) {
-            $course_id = $row["id"];
-            $course_name = $row["course_name"];
-            $courseName[$course_id] = $course_name;
-          }
-        }
-
-        $sql = "SELECT id, student_name, student_email, course_id FROM student";
+        // Fetch and display students
+        $sql = "SELECT s.id, s.student_name, s.student_email, c.course_name 
+                FROM student s 
+                JOIN course c ON s.course_id = c.id";
         $result = $conn->query($sql);
+        $serial_no = 1;
 
         if ($result->num_rows > 0) {
           while ($row = $result->fetch_assoc()) {
             echo "<tr>";
-            echo "<td>" . $row["id"] . "</td>";
+            echo "<td>" . $serial_no++ . "</td>";
             echo "<td>" . $row["student_name"] . "</td>";
             echo "<td>" . $row["student_email"] . "</td>";
-            echo "<td>" . (isset($courseName[$row["course_id"]]) ? $courseName[$row["course_id"]] : 'Unknown') . "</td>";
+            echo "<td>" . $row["course_name"] . "</td>";
             echo '<td><a href="?edit_id=' . $row["id"] . '">Edit</a></td>';
-            echo '<td><a href="#" onclick="deleteDialog(event, ' . $row["id"] . ')">Delete</a></td>';
-            echo '<td><a href="#">Add Marks</a></td>';
+            echo '<td><a href="?delete_id=' . $row["id"] . '">Delete</a></td>';
+            echo '<td><button onclick="addMarks(' . $row["id"] . ')">Add Marks</button></td>';
             echo "</tr>";
           }
         } else {
-          echo "<tr><td colspan='7'>No records found</td></tr>";
+          echo "<tr><td colspan='7'>No students found</td></tr>";
         }
 
         $conn->close();

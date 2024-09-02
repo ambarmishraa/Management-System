@@ -43,3 +43,18 @@ student_id INT,
 subject_id INT,
 marks INT NOT NULL
 ) ENGINE = InnoDB;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

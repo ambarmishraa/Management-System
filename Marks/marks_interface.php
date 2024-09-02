@@ -10,11 +10,11 @@ if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
 
-if (isset($_GET['student_id'] )) {
-  $student_id = intval($_GET['student_id']);
-  // Use $student_id to fetch and display the student's marks
-  echo "<script>console.log('Student ID: " . $student_id . "');</script>";
-}
+// if (isset($_GET['student_id'] )) {
+//   $student_id = intval($_GET['student_id']);
+//   // Use $student_id to fetch and display the student's marks
+//   echo "<script>console.log('Student ID: " . $student_id . "');</script>";
+// }
 
 // Handle deletion
 if (isset($_GET['delete_id'])) {
@@ -30,57 +30,6 @@ if (isset($_GET['delete_id'])) {
   exit();
 }
 
-// Initialize variables
-$course_id = 0;
-$selected_student_id = !empty($_POST["student_id"]) ? intval($_POST["student_id"]) : null;
-if ($selected_student_id) {
-  $course_id_query = "SELECT course_id FROM student WHERE id = ?";
-  $stmt = $conn->prepare($course_id_query);
-  $stmt->bind_param("i", $selected_student_id);
-  $stmt->execute();
-  $result = $stmt->get_result();
-  if ($row = $result->fetch_assoc()) {
-    $course_id = $row['course_id'];
-  }
-  $stmt->close();
-}
-
-// Fetch subjects based on the selected course_id
-$subjects_query = "SELECT subject.id, subject.subject_name 
-                   FROM subject 
-                   JOIN subcourse 
-                   WHERE subject.id = subcourse.subject_id
-                   AND subcourse.course_id = ?";
-$fetched_subject_id_name = "";
-if ($course_id > 0) {
-  $stmt = $conn->prepare($subjects_query);
-  $stmt->bind_param("i", $course_id);
-  $stmt->execute();
-  $result_subject_id_name = $stmt->get_result();
-  if ($result_subject_id_name->num_rows > 0) {
-    while ($row = $result_subject_id_name->fetch_assoc()) {
-      $fetched_subject_id_name .= "<option value='" . htmlspecialchars($row["id"]) . "'>" . htmlspecialchars($row["subject_name"]) . "</option>";
-    }
-  } else {
-    $fetched_subject_id_name = "<option value=''>No Subjects Available</option>";
-  }
-  $stmt->close();
-} else {
-  $fetched_subject_id_name = "<option value=''>Select a student first</option>";
-}
-
-// Fetch students
-$student_id_name = "SELECT id, student_name FROM student";
-$result_student_id_name = $conn->query($student_id_name);
-
-$fetched_student_id_name = "";
-if ($result_student_id_name->num_rows > 0) {
-  while ($row = $result_student_id_name->fetch_assoc()) {
-    $fetched_student_id_name .= "<option value='" . htmlspecialchars($row["id"]) . "'>" . htmlspecialchars($row["student_name"]) . "</option>";
-  }
-} else {
-  $fetched_student_id_name = "<option value=''>No Students Available</option>";
-}
 
 // Handle form submission for adding marks
 if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['student_id']) && !empty($_POST['subject_id']) && isset($_POST['marks'])) {
@@ -128,29 +77,75 @@ $conn->close();
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Marks</title>
   <script>
-    function deleteDialog(event, id) {
-      event.preventDefault();
-      if (confirm("Are you sure you want to delete?!")) {
-        window.location.href = "?delete_id=" + id;
-      }
+  function deleteDialog(event, id) {
+    event.preventDefault();
+    if (confirm("Are you sure you want to delete?!")) {
+      window.location.href = "?delete_id=" + id;
     }
+  }
 
-    function updateSubjects() {
-      var studentSelect = document.getElementById('student_id');
-      if (studentSelect) {
-        studentSelect.addEventListener('change', function() {
+  function updateSubjects() {
+    var studentSelect = document.getElementById('student_id');
+    if (studentSelect) {
+      studentSelect.addEventListener('change', function() {
+        console.log('Selected student ID:', this.value);
+        this.form.submit();
+      });
+    }
+  }
 
-          console.log('Selected student ID:', this.value);
+  document.addEventListener('DOMContentLoaded', function() {
+    updateSubjects();
 
-          this.form.submit();
+    // Retrieve student data from local storage
+    var studentResult = localStorage.getItem('studentResult');
+    if (studentResult) {
+      var result = JSON.parse(studentResult);
+      var studentName = result.student_name;
+      
+      // Set student name input value
+      var studentNameInput = document.getElementById('studentName');
+      if (studentNameInput) {
+        studentNameInput.value = studentName;
+      }
+      
+      // Populate subjects in dropdown
+      var subjectSelect = document.getElementById('subject_id');
+      if (subjectSelect) {
+        subjectSelect.innerHTML = ''; // Clear existing options
+
+        // Add a default option
+        var defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'Select a subject';
+        subjectSelect.appendChild(defaultOption);
+
+        // Add subjects from local storage
+        var subjects = result.subjects || [];
+        subjects.forEach(function(subject) {
+          if (subject.subject_name !== "Unknown") {
+            var option = document.createElement('option');
+            option.value = subject.subject_id; // Use subject_id from local storage
+            option.textContent = subject.subject_name; // Use subject_name from local storage
+            subjectSelect.appendChild(option);
+          }
         });
       }
+    } else {
+      // Handle case where no student data is available
+      var studentNameInput = document.getElementById('studentName');
+      if (studentNameInput) {
+        studentNameInput.value = "";
+      }
+      
+      // Optionally clear subjects dropdown
+      var subjectSelect = document.getElementById('subject_id');
+      if (subjectSelect) {
+        subjectSelect.innerHTML = ''; // Clear existing options
+      }
     }
-
-    document.addEventListener('DOMContentLoaded', function() {
-      updateSubjects();
-    });
-  </script>
+  });
+</script>
 </head>
 
 <body>
@@ -160,14 +155,10 @@ $conn->close();
         <div class="input-box">
           <h1 style="padding-left: 93px;">Add Marks</h1>
           <div class="input">
-            <select class="option-menu" id="student_id" name="student_id">
-              <option value="">Select Student</option>
-              <?php echo $student_id; ?>
-            </select>
+            <input class="option-menu" placeholder="Student Name" id="studentName" readonly />
           </div>
           <div class="input">
             <select class="option-menu" id="subject_id" name="subject_id">
-              <?php echo $fetched_subject_id_name; ?>
             </select>
           </div>
           <div class="input">

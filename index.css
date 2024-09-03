@@ -1,39 +1,44 @@
 * {
   padding: 0;
   margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
 }
 
 .button-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-wrap: wrap; /* Allows the items to wrap to the next row */
+  flex-wrap: wrap;
   height: 100vh;
-  background: #0f0c29; /* fallback for old browsers */
+  background: #0f0c29;
   background: -webkit-linear-gradient(
     to right,
     #24243e,
     #302b63,
     #0f0c29
-  ); /* Chrome 10-25, Safari 5.1-6 */
+  );
   background: linear-gradient(
     to right,
     #24243e,
     #302b63,
     #0f0c29
-  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  );
 }
 
 .btn {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 30%; /* Ensures only three items fit in a row */
-  margin: 10px; /* Adds space between buttons */
+  width: 25%;
+  margin: 10px;
 }
 
 .button-85 {
-  padding: 3em 2.5em; /* Adjusted padding to fit better */
+  padding: 3em 2em;
   border: none;
   outline: none;
   color: rgb(255, 255, 255);
@@ -42,9 +47,9 @@
   position: relative;
   z-index: 0;
   border-radius: 10px;
+  overflow: hidden;
   user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
+  transition: background 0.3s ease, transform 0.3s ease;
 }
 
 .button-85:before {
@@ -62,17 +67,16 @@
     #ff0000
   );
   position: absolute;
-  top: -2px;
-  left: -2px;
+  top: -50%;
+  left: -50%;
   background-size: 400%;
   z-index: -1;
-  filter: blur(5px);
-  -webkit-filter: blur(5px);
-  width: calc(100% + 4px);
-  height: calc(100% + 4px);
+  filter: blur(8px);
+  width: 200%;
+  height: 200%;
   animation: glowing-button-85 20s linear infinite;
+  border-radius: 50%;
   transition: opacity 0.3s ease-in-out;
-  border-radius: 10px;
 }
 
 @keyframes glowing-button-85 {
@@ -87,14 +91,46 @@
   }
 }
 
+.button-85:active {
+  transform: scale(0.98);
+}
+
+.button-85:focus {
+  outline: none;
+}
+
 .button-85:after {
-  z-index: -1;
   content: "";
   position: absolute;
   width: 100%;
   height: 100%;
   background: #222;
-  left: 0;
-  top: 0;
   border-radius: 10px;
+  top: 0;
+  left: 0;
+  z-index: -2;
+}
+
+.button-85.ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.button-85.ripple::before {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  width: 100px;
+  height: 100px;
+  transition: width 0.5s, height 0.5s, opacity 0.5s;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.button-85.ripple:active::before {
+  width: 300px;
+  height: 300px;
+  opacity: 1;
+  transition: 0s;
 }

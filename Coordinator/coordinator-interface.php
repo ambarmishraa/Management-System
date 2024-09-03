@@ -1,3 +1,4 @@
+
 <?php
 $servername = "localhost";
 $username = "root";
@@ -31,6 +32,8 @@ $conn->close();
 
 <head>
   <link rel="stylesheet" href="coordinator.css" />
+  <link rel="stylesheet" href="../Shared/navbar/navbar.css" />
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Coordinator</title>
@@ -54,11 +57,13 @@ $conn->close();
 </head>
 
 <body>
+<?php include '../Shared/navbar/navbar.php'; ?>
+
   <div class="left-half">
     <div class="inner-container">
       <form action="coordinator.php" method="post">
         <div class="input-box">
-          <h1 style="padding-left: 13px;">Add New Co-Ordinator</h1>
+          <h1 style="padding-left: 38px;">Add Co-Ordinator</h1>
           <div class="input">
             <input
               class="field"

@@ -31,6 +31,8 @@ $conn->close();
 
 <head>
     <link rel="stylesheet" href="course.css" />
+  <link rel="stylesheet" href="../Shared/navbar/navbar.css" />
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Course</title>
@@ -49,6 +51,8 @@ $conn->close();
 </head>
 
 <body>
+<?php include '../Shared/navbar/navbar.php'; ?>
+
     <div class="left-half">
         <div class="inner-container">
             <form action="course.php" method="post">

@@ -74,7 +74,7 @@
   }
   
   .submit-btn {
-    width: 50%;
+    width: 30em;
     height: 47%;
     border: 1px solid black;
     border-radius: 10px;
@@ -161,4 +161,9 @@
     border-radius: 10px; 
     margin: auto;
     height: 90vh;
+}
+
+.box-bottom{
+  display: flex;
+  justify-content: space-around;
 }

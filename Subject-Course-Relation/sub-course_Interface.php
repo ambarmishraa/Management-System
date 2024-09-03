@@ -144,6 +144,8 @@ if (isset($_GET['edit_id'])) {
 
 <head>
     <link rel="stylesheet" href="sub-course.css" />
+  <link rel="stylesheet" href="../Shared/navbar/navbar.css" />
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Subject & Course</title>
@@ -160,6 +162,8 @@ if (isset($_GET['edit_id'])) {
 </head>
 
 <body>
+<?php include '../Shared/navbar/navbar.php'; ?>
+
     <div class="left-half">
         <div class="inner-container">
             <form action="sub-course_Interface.php" method="post">
@@ -176,12 +180,14 @@ if (isset($_GET['edit_id'])) {
                     <div class="checkbox-input">
                         <?php echo $subject_options; ?>
                     </div>
-                    <div class="input">
+                   <div class="box-bottom" >
+                   <div class="input">
                         <input class="submit-btn" type="submit" value="Add Subject">
                     </div>
-                    <div style="color: red; margin-left:45%;">
+                    <div >
                         <button style="background-color: #fff; border-radius:10px; padding:4px"><a href="#right-half">View Table</a></button>
                     </div>
+                   </div>
                 </div>
             </form>
 

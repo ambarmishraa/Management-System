@@ -168,7 +168,7 @@ if (isset($_GET['edit_id'])) {
         <div class="inner-container">
             <form action="sub-course_Interface.php" method="post">
                 <div class="input-box">
-                    <h1 style="padding-left: 160px; margin-bottom:10px">Relate Subject & Course</h1>
+                    <h1 style="padding-left: 160px; margin:32px 0">Relate Subject & Course</h1>
 
                     <div class="input">
                         <select class="option-menu" id="course_id" name="course_id">
@@ -193,25 +193,36 @@ if (isset($_GET['edit_id'])) {
 
             <!-- Edit Form -->
             <?php if ($edit_course_id): ?>
-                <h2>Edit Course-Subject Relationship</h2>
+                <!-- <h2 style="color: white;">Edit Course-Subject Relationship</h2> -->
                 <form action="sub-course_Interface.php" method="post">
                     <input type="hidden" name="edit_course_id" value="<?php echo $edit_course_id; ?>">
-                    <p>Select subjects to update:</p>
+                    <p style="color: white;">Select subjects to update:</p><br>
                     <?php
                     $sql_subject = "SELECT id, subject_name FROM subject";
                     $subject_result = $conn->query($sql_subject);
 
                     if ($subject_result->num_rows > 0) {
                         $subjects = $subject_result->fetch_all(MYSQLI_ASSOC);
+                        $counter = 0; // Initialize a counter
                         foreach ($subjects as $row) {
                             $subject_id = $row["id"];
                             $subject_name = $row["subject_name"];
                             $checked = in_array($subject_id, $edit_subject_ids) ? 'checked' : '';
-                            echo "<label><input type='checkbox' name='subject_ids[]' value='$subject_id' $checked>$subject_name</label><br>";
+                    
+                            // Start a new row every 2 subjects
+                            if ($counter % 2 == 0) {
+                                echo '<div style="clear: both;"></div>';
+                            }
+                    
+                            // Output the checkbox and subject name
+                            echo "<label style='color: white; display: inline-block; width: 48%; box-sizing: border-box;'><input type='checkbox' name='subject_ids[]' value='$subject_id' $checked>$subject_name</label>";
+                    
+                            $counter++; // Increment the counter
                         }
                     } else {
                         echo "<label>No subjects available</label>";
                     }
+                    
                     ?>
                     <div class="input">
                         <input class="submit-btn" type="submit" name="update" value="Update ">

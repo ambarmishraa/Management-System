@@ -1,4 +1,3 @@
-
 <?php
 $servername = "localhost";
 $username = "root";
@@ -51,13 +50,11 @@ $conn->close();
         console.log("Deletion canceled.");
       }
     }
-
-  
   </script>
 </head>
 
 <body>
-<?php include '../Shared/navbar/navbar.php'; ?>
+  <?php include '../Shared/navbar/navbar.php'; ?>
 
   <div class="left-half">
     <div class="inner-container">
@@ -92,17 +89,20 @@ $conn->close();
           <div class="input">
             <input class="submit-btn" type="submit" value="Add Co-Ordinator">
           </div>
-          
-            <!-- <h4 style="color: red; margin-left:10px;">View Table</h4> -->
-            <div style="color: red; margin-left:40%;">
-              <button style="background-color: #fff; border-radius:10px; padding:4px"><a href="#right-half">View Table</a></button>
-            </div>
-          
+
+          <!-- <h4 style="color: red; margin-left:10px;">View Table</h4> -->
+          <div style="color: red; margin-left:40%;">
+            <button style="background-color: #fff; border-radius:10px; padding:4px"><a href="#right-half">View Table</a></button>
+          </div>
+
         </div>
 
       </form>
+
     </div>
+
   </div>
+
 
   <div class="right-half" id="right-half">
     <table border="1">

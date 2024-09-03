@@ -79,13 +79,14 @@
 
 /* For the right half */
 .right-half {
-  background: rgb(131, 58, 180);
+  /* background: rgb(131, 58, 180);
   background: linear-gradient(
     90deg,
     rgba(131, 58, 180, 1) 0%,
     rgba(253, 29, 29, 1) 50%,
     rgba(252, 176, 69, 1) 100%
-  );
+  ); */
+  background-image: linear-gradient(to top, #96fbc4 0%, #f9f586 100%);
   width: auto;
   height: 100%;
 }
@@ -103,7 +104,7 @@ th,
 td {
   padding: 10px;
   text-align: left;
-  border: 1px solid #ddd;
+  border: 2px solid black;
 }
 
 th {
@@ -115,11 +116,3 @@ h1{
   color: black;
 }
 
-.error {
-  color: red;
-  font-size: 14px;
-}
-.success {
-  color: green;
-  font-size: 14px;
-}

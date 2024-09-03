@@ -109,10 +109,10 @@ $conn->close();
                     <tr>
                         <td><?php echo htmlspecialchars($edit_id); ?></td>
                         <td>
-                            <input type="text" name="student_name" value="<?php echo htmlspecialchars($student_name); ?>" required />
+                            <input type="text" name="student_name" value="<?php echo htmlspecialchars($student_name); ?>" readonly />
                         </td>
                         <td>
-                            <input type="text" name="subject_name" value="<?php echo htmlspecialchars($subject_name); ?>" required />
+                            <input type="text" name="subject_name" value="<?php echo htmlspecialchars($subject_name); ?>" readonly />
                         </td>
                         <td>
                             <input type="number" name="marks" value="<?php echo htmlspecialchars($marks); ?>" required />

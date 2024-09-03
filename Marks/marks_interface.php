@@ -33,23 +33,25 @@ if (isset($_GET['delete_id'])) {
 
 // Handle form submission for adding marks
 if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['student_id']) && !empty($_POST['subject_id']) && isset($_POST['marks'])) {
-  $student_id = $_POST["student_id"];
-  $subject_id = $_POST["subject_id"];
-  $marks = $_POST["marks"];
+  $student_id = intval($_POST["student_id"]); // Fetch student_id from the form submission
+  $subject_id = intval($_POST["subject_id"]); // Fetch subject_id from the form submission
+  $marks = intval($_POST["marks"]); // Fetch marks from the form submission
 
   $stmt = $conn->prepare("INSERT INTO marks (student_id, subject_id, marks) VALUES (?, ?, ?)");
   $stmt->bind_param("iii", $student_id, $subject_id, $marks);
 
   if ($stmt->execute()) {
-    echo "New Marks added successfully";
+      echo "New Marks added successfully";
   } else {
-    echo "Error: " . $stmt->error;
+      echo "Error: " . $stmt->error;
   }
   $stmt->close();
 
+  // Redirect to the same page to avoid resubmission on page reload
   header("Location: marks_interface.php");
   exit();
 }
+
 
 // Fetch marks
 $marks_query = "SELECT marks.id AS marks_id, marks.student_id, marks.subject_id, marks.marks, 
@@ -77,75 +79,81 @@ $conn->close();
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Marks</title>
   <script>
-  function deleteDialog(event, id) {
-    event.preventDefault();
-    if (confirm("Are you sure you want to delete?!")) {
-      window.location.href = "?delete_id=" + id;
-    }
-  }
-
-  function updateSubjects() {
-    var studentSelect = document.getElementById('student_id');
-    if (studentSelect) {
-      studentSelect.addEventListener('change', function() {
-        console.log('Selected student ID:', this.value);
-        this.form.submit();
-      });
-    }
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    updateSubjects();
-
-    // Retrieve student data from local storage
-    var studentResult = localStorage.getItem('studentResult');
-    if (studentResult) {
-      var result = JSON.parse(studentResult);
-      var studentName = result.student_name;
-      
-      // Set student name input value
-      var studentNameInput = document.getElementById('studentName');
-      if (studentNameInput) {
-        studentNameInput.value = studentName;
+    function deleteDialog(event, id) {
+      event.preventDefault();
+      if (confirm("Are you sure you want to delete?!")) {
+        window.location.href = "?delete_id=" + id;
       }
-      
-      // Populate subjects in dropdown
-      var subjectSelect = document.getElementById('subject_id');
-      if (subjectSelect) {
-        subjectSelect.innerHTML = ''; // Clear existing options
+    }
 
-        // Add a default option
-        var defaultOption = document.createElement('option');
-        defaultOption.value = '';
-        defaultOption.textContent = 'Select a subject';
-        subjectSelect.appendChild(defaultOption);
-
-        // Add subjects from local storage
-        var subjects = result.subjects || [];
-        subjects.forEach(function(subject) {
-          if (subject.subject_name !== "Unknown") {
-            var option = document.createElement('option');
-            option.value = subject.subject_id; // Use subject_id from local storage
-            option.textContent = subject.subject_name; // Use subject_name from local storage
-            subjectSelect.appendChild(option);
-          }
+    function updateSubjects() {
+      var studentSelect = document.getElementById('student_id');
+      if (studentSelect) {
+        studentSelect.addEventListener('change', function() {
+          console.log('Selected student ID:', this.value);
+          this.form.submit();
         });
       }
-    } else {
-      // Handle case where no student data is available
-      var studentNameInput = document.getElementById('studentName');
-      if (studentNameInput) {
-        studentNameInput.value = "";
-      }
-      
-      // Optionally clear subjects dropdown
-      var subjectSelect = document.getElementById('subject_id');
-      if (subjectSelect) {
-        subjectSelect.innerHTML = ''; // Clear existing options
-      }
     }
-  });
-</script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+  // Retrieve student data from local storage
+  var studentResult = localStorage.getItem('studentResult');
+  if (studentResult) {
+    var result = JSON.parse(studentResult);
+    var studentName = result.student_name;
+    var studentId = result.studentid; // Get studentid from local storage
+    
+    // Set the student name input value
+    var studentNameInput = document.getElementById('studentName');
+    if (studentNameInput) {
+      studentNameInput.value = studentName; // Display the student's name in the input
+    }
+
+    // Set the hidden student ID input value
+    var studentIdInput = document.getElementById('student_id');
+    if (studentIdInput) {
+      studentIdInput.value = studentId; // Set the value of hidden input to studentid
+    }
+    
+    // Populate subjects in the dropdown
+    var subjectSelect = document.getElementById('subject_id');
+    if (subjectSelect) {
+      subjectSelect.innerHTML = ''; // Clear existing options
+
+      // Add a default option
+      var defaultOption = document.createElement('option');
+      defaultOption.value = '';
+      defaultOption.textContent = 'Select a subject';
+      subjectSelect.appendChild(defaultOption);
+
+      // Add subjects from local storage
+      var subjects = result.subjects || [];
+      subjects.forEach(function(subject) {
+        if (subject.subject_name !== "Unknown") {
+          var option = document.createElement('option');
+          option.value = subject.subject_id; // Use subject_id from local storage
+          option.textContent = subject.subject_name; // Use subject_name from local storage
+          subjectSelect.appendChild(option);
+        }
+      });
+    }
+  } else {
+    // Handle case where no student data is available
+    var studentNameInput = document.getElementById('studentName');
+    if (studentNameInput) {
+      studentNameInput.value = "";
+    }
+
+    // Optionally clear subjects dropdown
+    var subjectSelect = document.getElementById('subject_id');
+    if (subjectSelect) {
+      subjectSelect.innerHTML = ''; // Clear existing options
+    }
+  }
+});
+
+  </script>
 </head>
 
 <body>
@@ -155,8 +163,10 @@ $conn->close();
         <div class="input-box">
           <h1 style="padding-left: 93px;">Add Marks</h1>
           <div class="input">
-            <input class="option-menu" placeholder="Student Name" id="studentName" readonly />
-          </div>
+  <!-- Hidden input field for student ID -->
+  <input type="hidden" id="student_id" name="student_id" />
+  <input class="option-menu" placeholder="Student Name" id="studentName" readonly />
+</div>
           <div class="input">
             <select class="option-menu" id="subject_id" name="subject_id">
             </select>
@@ -224,4 +234,4 @@ $conn->close();
   </div>
 </body>
 
-</html> 
+</html>

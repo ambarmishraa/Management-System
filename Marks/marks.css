@@ -12,7 +12,7 @@
       rgba(0, 212, 255, 1) 100%
     ); */
   background-image: url("/assets/marks.jpg");
-  background-size: auto;
+  background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
   width: 100%;
@@ -82,13 +82,14 @@
 
 /* For the right half */
 .right-half {
-  background: rgb(131, 58, 180);
+  /* background: rgb(131, 58, 180);
   background: linear-gradient(
     90deg,
     rgba(131, 58, 180, 1) 0%,
     rgba(253, 29, 29, 1) 50%,
     rgba(252, 176, 69, 1) 100%
-  );
+  ); */
+  background-image: linear-gradient(-20deg, #fc6076 0%, #ff9a44 100%);
   width: auto;
   height: auto;
 }
@@ -106,7 +107,7 @@ th,
 td {
   padding: 10px;
   text-align: left;
-  border: 1px solid #ddd;
+  border: 2px solid black;
 }
 
 th {

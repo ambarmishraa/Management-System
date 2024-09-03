@@ -98,59 +98,62 @@ $conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <link rel="stylesheet" href="student.css" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Student</title>
   <script>
-   document.addEventListener("DOMContentLoaded", function() {
-  // Ensure studentsWithSubjects and subjectArray are defined
-  var studentsWithSubjects = <?php echo $studentsWithSubjectsJson; ?>;
-  var subjectArray = <?php echo $subjectArrayJson; ?>;
+    document.addEventListener("DOMContentLoaded", function() {
+      // Ensure studentsWithSubjects and subjectArray are defined
+      var studentsWithSubjects = <?php echo $studentsWithSubjectsJson; ?>;
+      var subjectArray = <?php echo $subjectArrayJson; ?>;
 
-  if (typeof studentsWithSubjects !== 'object' || typeof subjectArray !== 'object') {
-    console.error('studentsWithSubjects or subjectArray is not defined or is not an object');
-    return;
-  }
+      if (typeof studentsWithSubjects !== 'object' || typeof subjectArray !== 'object') {
+        console.error('studentsWithSubjects or subjectArray is not defined or is not an object');
+        return;
+      }
 
-  // Log data to the console for debugging
-  console.log("Students with Subjects:", studentsWithSubjects);
-  // console.log("Subject Array:", subjectArray);
+      // Log data to the console for debugging
+      console.log("Students with Subjects:", studentsWithSubjects);
+      // console.log("Subject Array:", subjectArray);
 
-  // Function to handle "Add Marks" click event
-  window.addMarks = function(studentId) {
-    if (studentsWithSubjects.hasOwnProperty(studentId)) {
-      var student = studentsWithSubjects[studentId];
-      var studentName = student.student_name;
-      var subjects = student.subjects.map(sub => ({
-        subject_id: sub.subject_id,
-        subject_name: sub.subject_name
-      }));
+      // Function to handle "Add Marks" click event
+      window.addMarks = function(studentId) {
+        if (studentsWithSubjects.hasOwnProperty(studentId)) {
+          var student = studentsWithSubjects[studentId];
+          var studentName = student.student_name;
+          var subjects = student.subjects.map(sub => ({
+            subject_id: sub.subject_id,
+            subject_name: sub.subject_name
+          }));
 
-      // Create a new object with the student's ID, name, and subjects
-      var result = {
-        studentid: studentId,
-        student_name: studentName,
-        subjects: subjects
+          // Create a new object with the student's ID, name, and subjects
+          var result = {
+            studentid: studentId,
+            student_name: studentName,
+            subjects: subjects
+          };
+
+          // Save the result and subject array to local storage
+          localStorage.setItem('studentResult', JSON.stringify(result));
+          // localStorage.setItem('subjectArray', JSON.stringify(subjectArray));
+
+          // Log the result to the console
+          console.log("Student Details:", result);
+          console.log("Subject Array in Local Storage:", subjectArray);
+
+          // Navigate to the new PHP page
+          window.location.href = '/Marks/marks_interface.php?id=' + encodeURIComponent(studentId);
+        } else {
+          console.log("Student with ID " + studentId + " not found.");
+        }
       };
-
-      // Save the result and subject array to local storage
-      localStorage.setItem('studentResult', JSON.stringify(result));
-      // localStorage.setItem('subjectArray', JSON.stringify(subjectArray));
-
-      // Log the result to the console
-      console.log("Student Details:", result);
-      console.log("Subject Array in Local Storage:", subjectArray);
-
-      // Navigate to the new PHP page
-      window.location.href = '/Marks/marks_interface.php?id=' + encodeURIComponent(studentId);
-    } else {
-      console.log("Student with ID " + studentId + " not found.");
-    }
-  };});
+    });
   </script>
 </head>
+
 <body>
   <div class="left-half">
     <div class="inner-container">
@@ -225,8 +228,8 @@ $conn->close();
             echo "Error deleting record: " . $conn->error;
           }
 
-          header("Location: " . $_SERVER['PHP_SELF']);
-          exit();
+          // header("Location: " . $_SERVER['PHP_SELF']);
+          // exit();
         }
 
         // Handle edit form submission
@@ -242,8 +245,8 @@ $conn->close();
           $stmt->close();
 
           // Reload the page to reflect changes
-          header("Location: " . $_SERVER['PHP_SELF']);
-          exit();
+          // header("Location: " . $_SERVER['PHP_SELF']);
+          // exit();
         }
 
         // Handle edit request
@@ -261,7 +264,7 @@ $conn->close();
             echo '<h3>Edit Student</h3>';
             echo '<form method="post" action="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '">';
             echo '<input type="hidden" name="id" value="' . $row['id'] . '">';
-            echo '<div class="input-box">';
+            echo '<div class="">';
             echo '<input type="text" name="student_name" value="' . $row['student_name'] . '" required>';
             echo '<select name="course_id" required>';
 
@@ -308,4 +311,5 @@ $conn->close();
     </table>
   </div>
 </body>
+
 </html>

@@ -25,7 +25,7 @@ subject_code VARCHAR(100) NOT NULL
 CREATE TABLE subCourse (
 id INT AUTO_INCREMENT PRIMARY KEY,
 course_id INT,
-subject_id INT,
+subject_id INT
 ) ENGINE=InnoDB;
 
 //Creation of Student Table in Mysql
@@ -42,7 +42,7 @@ id INT AUTO_INCREMENT PRIMARY KEY,
 student_id INT,
 subject_id INT,
 marks INT NOT NULL
-) ENGINE = InnoDB;
+) ENGINE = InnoDB; 
 
 
 

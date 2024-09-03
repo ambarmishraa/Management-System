@@ -164,7 +164,7 @@ if (isset($_GET['edit_id'])) {
         <div class="inner-container">
             <form action="sub-course_Interface.php" method="post">
                 <div class="input-box">
-                    <h1 style="padding-left: 5px; margin-bottom:60px">Relate Subject & Course</h1>
+                    <h1 style="padding-left: 160px; margin-bottom:10px">Relate Subject & Course</h1>
 
                     <div class="input">
                         <select class="option-menu" id="course_id" name="course_id">
@@ -172,16 +172,16 @@ if (isset($_GET['edit_id'])) {
                             <?php echo $course_options; ?>
                         </select>
                     </div>
-                    <p style="padding-left:35px; color:white;font-size:15px">Choose Subject : </p>
+                    <p style="padding-left:38px; color:white;font-size:18px">Choose Subject : </p>
                     <div class="checkbox-input">
                         <?php echo $subject_options; ?>
                     </div>
                     <div class="input">
                         <input class="submit-btn" type="submit" value="Add Subject">
                     </div>
-                    <div style="color: red; margin-left:40%;">
-              <button style="background-color: #fff; border-radius:10px; padding:4px"><a href="#right-half">View Table</a></button>
-            </div>
+                    <div style="color: red; margin-left:45%;">
+                        <button style="background-color: #fff; border-radius:10px; padding:4px"><a href="#right-half">View Table</a></button>
+                    </div>
                 </div>
             </form>
 
@@ -208,7 +208,7 @@ if (isset($_GET['edit_id'])) {
                     }
                     ?>
                     <div class="input">
-                        <input class="submit-btn" type="submit" name="update" value="Update Subjects">
+                        <input class="submit-btn" type="submit" name="update" value="Update ">
                     </div>
                 </form>
             <?php endif; ?>
@@ -274,4 +274,4 @@ if (isset($_GET['edit_id'])) {
     </div>
 </body>
 
-</html> 
+</html>

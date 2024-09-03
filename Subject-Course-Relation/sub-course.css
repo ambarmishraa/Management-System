@@ -120,7 +120,7 @@
     color: black;
   }
 
-   .checkbox-input {
+   /* .checkbox-input { */
     /* background-color: red; */
     /* padding-top:20px;
     height: 14vh;
@@ -128,7 +128,7 @@
     display: flex;
     justify-content: center; */
     /* align-items: center; */
-  }
+  /* } */
 
   /* .gap{
     height:15vh

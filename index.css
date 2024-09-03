@@ -14,7 +14,7 @@ body {
   align-items: center;
   flex-wrap: wrap;
   height: 100vh;
-  background: #0f0c29;
+  /* background: #0f0c29;
   background: -webkit-linear-gradient(
     to right,
     #24243e,
@@ -26,7 +26,11 @@ body {
     #24243e,
     #302b63,
     #0f0c29
-  );
+  ); */
+  background-image: url("/assets/index.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .btn {

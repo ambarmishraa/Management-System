@@ -1,47 +1,42 @@
-//Creation of Coordinator Table in Mysql
+
 CREATE TABLE coordinator (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL
-) ENGINE=InnoDB;
+) ;
 
-//Creation of Course Table in Mysql
 CREATE TABLE course (
     id INT AUTO_INCREMENT PRIMARY KEY,
     course_name VARCHAR(100) NOT NULL,
     course_code VARCHAR(50) NOT NULL,
     coordinator_id INT,
-) ENGINE=InnoDB;
+) ;
 
-//Creation of Subject Table in Mysql
 CREATE TABLE subject(
 id INT AUTO_INCREMENT PRIMARY KEY,
 subject_name VARCHAR(100) NOT NULL,
 subject_code VARCHAR(100) NOT NULL
-) ENGINE=InnoDB;
+) ;
 
-//Creation of Subject and Course relation Table in Mysql
 CREATE TABLE subCourse (
 id INT AUTO_INCREMENT PRIMARY KEY,
 course_id INT,
 subject_id INT
-) ENGINE=InnoDB;
+) ;
 
-//Creation of Student Table in Mysql
 CREATE TABLE student(
 id INT AUTO_INCREMENT PRIMARY KEY,
 student_name VARCHAR(100) NOT NULL,
 student_email VARCHAR(100) NOT NULL,
 course_id INT,
-) ENGINE=InnoDB;
+) ;
 
-//Creation of Marks Table in Mysql
 CREATE TABLE marks(
 id INT AUTO_INCREMENT PRIMARY KEY,
 student_id INT,
 subject_id INT,
 marks INT NOT NULL
-) ENGINE = InnoDB; 
+); 
 
 
 
